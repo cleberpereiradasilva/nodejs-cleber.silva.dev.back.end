@@ -1,0 +1,12 @@
+{
+  "name": "cleber.silva.dev.back.end",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Cleber Silva <cleber.pereira@pm.me>",
+  "license": "ISC"
+}
