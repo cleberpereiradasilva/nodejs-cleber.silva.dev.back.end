@@ -8,5 +8,8 @@
   },
   "keywords": [],
   "author": "Cleber Silva <cleber.pereira@pm.me>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "git-commit-msg-linter": "^4.0.7"
+  }
 }
