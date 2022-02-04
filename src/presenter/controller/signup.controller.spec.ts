@@ -11,9 +11,16 @@ describe('Signup Controller', () => {
       sut
     }
   }
-  it('Check if handle method exist', () => {
+  it('Should return 200 when provide all correct data', () => {
     const { sut } = makeSut()
-    const response = sut.handle()
+    const response = sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'valid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
     expect(response.statusCode).toBe(200)
   })
   // test if handle exist

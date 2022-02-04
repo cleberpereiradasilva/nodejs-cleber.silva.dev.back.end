@@ -1,4 +1,4 @@
 import { httpResponse } from '../helpers/httpResponse'
 export interface Controller{
-  handle: () => httpResponse
+  handle: (httpRequest: any) => httpResponse
 }
