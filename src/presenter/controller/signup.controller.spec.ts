@@ -1,6 +1,6 @@
 import { SignupController } from './signup.controller'
 import { Controller } from './protocols/controller'
-import { badRequest } from '../errors/badRequest'
+import { badRequest } from './errors/badRequest'
 describe('Signup Controller', () => {
   interface sutType {
     sut: Controller

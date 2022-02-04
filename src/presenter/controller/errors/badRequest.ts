@@ -1,4 +1,4 @@
-import { httpResponse } from '../helpers/httpResponse'
+import { httpResponse } from '../protocols/httpResponse'
 
 export const badRequest = (field: string): httpResponse => ({
   statusCode: 400,

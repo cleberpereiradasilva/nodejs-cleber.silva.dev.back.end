@@ -1,7 +1,7 @@
 import { Controller } from './protocols/controller'
-import { httpResponse } from '../helpers/httpResponse'
-import { httpRequest } from '../helpers/httpRequest'
-import { badRequest } from '../errors/badRequest'
+import { httpResponse } from './protocols/httpResponse'
+import { httpRequest } from './protocols/httpRequest'
+import { badRequest } from './errors/badRequest'
 
 export class SignupController implements Controller {
   handle (httpRequest: httpRequest): httpResponse {
