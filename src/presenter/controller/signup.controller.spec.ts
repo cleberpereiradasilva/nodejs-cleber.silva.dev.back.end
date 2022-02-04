@@ -2,12 +2,15 @@ import { SignupController } from './signup.controller'
 import { Controller } from './protocols/controller'
 import { badRequest } from './errors/badRequest'
 import { invalidEmail } from './errors/invalidEmail'
-
+import { invalidPassword } from './errors/invalidPassword'
+import { PasswordValidator } from './protocols/passwordValidator'
 import { EmailValidator } from './protocols/emailValidator'
+
 describe('Signup Controller', () => {
   interface sutType {
     sut: Controller
     validatorForEmail: EmailValidator
+    validatorForPassword: PasswordValidator
   }
 
   class ValidatorForEmail implements EmailValidator {
@@ -16,12 +19,20 @@ describe('Signup Controller', () => {
     }
   }
 
+  class ValidatorForPassword implements PasswordValidator {
+    isValid (password: string): boolean {
+      return true
+    }
+  }
+
   const makeSut = (): sutType => {
     const validatorForEmail = new ValidatorForEmail()
-    const sut = new SignupController(validatorForEmail)
+    const validatorForPassword = new ValidatorForPassword()
+    const sut = new SignupController(validatorForEmail, validatorForPassword)
     return {
       sut,
-      validatorForEmail
+      validatorForEmail,
+      validatorForPassword
     }
   }
   it('Should return 400 when no provide name', () => {
@@ -110,6 +121,34 @@ describe('Signup Controller', () => {
       }
     })
     expect(response).toEqual(invalidEmail())
+  })
+
+  it('Should correct password be called in PasswordValidator', () => {
+    const { sut, validatorForPassword } = makeSut()
+    const isValidMock = jest.spyOn(validatorForPassword, 'isValid')
+    sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'valid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
+    expect(isValidMock).toBeCalledWith('valid_password')
+  })
+
+  it('Should return 400 when password is not a valid password', () => {
+    const { sut, validatorForPassword } = makeSut()
+    jest.spyOn(validatorForPassword, 'isValid').mockReturnValueOnce(false)
+    const response = sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'invalid_email',
+        password: 'invalid_password',
+        confirmation: 'invalid_password'
+      }
+    })
+    expect(response).toEqual(invalidPassword())
   })
 
   // check expetion
