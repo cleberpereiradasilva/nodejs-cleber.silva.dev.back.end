@@ -84,6 +84,20 @@ describe('Signup Controller', () => {
     expect(response).toEqual(badRequest('confirmation'))
   })
 
+  it('Should correct email be called in EmailValidator', () => {
+    const { sut, validatorForEmail } = makeSut()
+    const isValidMock = jest.spyOn(validatorForEmail, 'isValid')
+    sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'valid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
+    expect(isValidMock).toBeCalledWith('valid_email')
+  })
+
   it('Should return 400 when email is not a valid email', () => {
     const { sut, validatorForEmail } = makeSut()
     jest.spyOn(validatorForEmail, 'isValid').mockReturnValueOnce(false)
