@@ -1,15 +1,27 @@
 import { SignupController } from './signup.controller'
 import { Controller } from './protocols/controller'
 import { badRequest } from './errors/badRequest'
+import { invalidEmail } from './errors/invalidEmail'
+
+import { EmailValidator } from './protocols/emailValidator'
 describe('Signup Controller', () => {
   interface sutType {
     sut: Controller
+    validatorForEmail: EmailValidator
+  }
+
+  class ValidatorForEmail implements EmailValidator {
+    isValid (email: string): boolean {
+      return true
+    }
   }
 
   const makeSut = (): sutType => {
-    const sut = new SignupController()
+    const validatorForEmail = new ValidatorForEmail()
+    const sut = new SignupController(validatorForEmail)
     return {
-      sut
+      sut,
+      validatorForEmail
     }
   }
   it('Should return 400 when no provide name', () => {
@@ -72,9 +84,19 @@ describe('Signup Controller', () => {
     expect(response).toEqual(badRequest('confirmation'))
   })
 
-  // check if receive corect params
-
-  // check email, name, password, confirm password
+  it('Should return 400 when email is not a valid email', () => {
+    const { sut, validatorForEmail } = makeSut()
+    jest.spyOn(validatorForEmail, 'isValid').mockReturnValueOnce(false)
+    const response = sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'invalid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
+    expect(response).toEqual(invalidEmail())
+  })
 
   // check expetion
 })
