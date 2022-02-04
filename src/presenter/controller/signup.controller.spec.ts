@@ -1,8 +1,9 @@
 import { SignupController } from './signup.controller'
 import { Controller } from './protocols/controller'
-import { badRequest } from './errors/badRequest'
-import { invalidEmail } from './errors/invalidEmail'
-import { invalidPassword } from './errors/invalidPassword'
+import { invalidParamError } from './errors/invalidParamError'
+import { serverError } from './errors/serverError'
+import { invalidEmailError } from './errors/invalidEmailError'
+import { invalidPasswordError } from './errors/invalidPasswordError'
 import { PasswordValidator } from './protocols/passwordValidator'
 import { EmailValidator } from './protocols/emailValidator'
 
@@ -44,7 +45,8 @@ describe('Signup Controller', () => {
         confirmation: 'valid_password'
       }
     })
-    expect(response).toEqual(badRequest('name'))
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidParamError('name'))
   })
   it('Should return 400 when no provide email', () => {
     const { sut } = makeSut()
@@ -55,7 +57,8 @@ describe('Signup Controller', () => {
         confirmation: 'valid_password'
       }
     })
-    expect(response).toEqual(badRequest('email'))
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidParamError('email'))
   })
 
   it('Should return 400 when no provide password', () => {
@@ -67,7 +70,8 @@ describe('Signup Controller', () => {
         confirmation: 'valid_password'
       }
     })
-    expect(response).toEqual(badRequest('password'))
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidParamError('password'))
   })
 
   it('Should return 400 when no provide confirmation', () => {
@@ -79,7 +83,8 @@ describe('Signup Controller', () => {
         password: 'valid_password'
       }
     })
-    expect(response).toEqual(badRequest('confirmation'))
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidParamError('confirmation'))
   })
 
   it('Should return 400 when password is diferente of confirmation', () => {
@@ -92,7 +97,8 @@ describe('Signup Controller', () => {
         confirmation: 'invalid_password'
       }
     })
-    expect(response).toEqual(badRequest('confirmation'))
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidParamError('confirmation'))
   })
 
   it('Should correct email be called in EmailValidator', () => {
@@ -120,7 +126,8 @@ describe('Signup Controller', () => {
         confirmation: 'valid_password'
       }
     })
-    expect(response).toEqual(invalidEmail())
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidEmailError())
   })
 
   it('Should correct password be called in PasswordValidator', () => {
@@ -148,8 +155,24 @@ describe('Signup Controller', () => {
         confirmation: 'invalid_password'
       }
     })
-    expect(response).toEqual(invalidPassword())
+    expect(response.statusCode).toBe(400)
+    expect(response).toEqual(invalidPasswordError())
   })
 
-  // check expetion
+  it('Should return Exception', () => {
+    const { sut, validatorForPassword } = makeSut()
+    jest.spyOn(validatorForPassword, 'isValid').mockImplementation(() => {
+      throw Error()
+    })
+    const response = sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'invalid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
+    expect(response.statusCode).toBe(500)
+    expect(response).toEqual(serverError())
+  })
 })
