@@ -1,4 +1,4 @@
-import { httpResponse } from './httpResponse'
+import { HttpResponse } from './httpResponse'
 export interface Controller{
-  handle: (httpRequest: any) => httpResponse
+  handle: (httpRequest: any) => HttpResponse
 }

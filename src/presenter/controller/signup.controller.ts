@@ -1,20 +1,27 @@
-import { Controller } from './protocols/controller'
-import { httpResponse } from './protocols/httpResponse'
-import { httpRequest } from './protocols/httpRequest'
-import { invalidParamError } from './errors/invalidParamError'
-import { serverError } from './errors/serverError'
-import { invalidPasswordError } from './errors/invalidPasswordError'
-import { invalidEmailError } from './errors/invalidEmailError'
-import { EmailValidator } from './protocols/emailValidator'
-import { PasswordValidator } from './protocols/passwordValidator'
+import {
+  Controller,
+  HttpResponse,
+  HttpRequest,
+  EmailValidator,
+  PasswordValidator,
+  CreateAccount
+} from './protocols'
+
+import {
+  invalidParamError,
+  serverError,
+  invalidPasswordError,
+  invalidEmailError
+} from './errors'
 
 export class SignupController implements Controller {
   constructor (private readonly validatorForEmail: EmailValidator,
-    private readonly validatorForPassword: PasswordValidator) {
+    private readonly validatorForPassword: PasswordValidator,
+    private readonly createAccount: CreateAccount) {
     this.validatorForEmail = validatorForEmail
   }
 
-  handle (httpRequest: httpRequest): httpResponse {
+  handle (httpRequest: HttpRequest): HttpResponse {
     try {
       const requiredFields = ['name', 'email', 'password', 'confirmation']
       for (const field of requiredFields) {
@@ -34,10 +41,7 @@ export class SignupController implements Controller {
         return invalidPasswordError()
       }
 
-      return {
-        statusCode: 200,
-        body: ''
-      }
+      return this.createAccount.addAccount(httpRequest)
     } catch (error) {
       return serverError()
     }

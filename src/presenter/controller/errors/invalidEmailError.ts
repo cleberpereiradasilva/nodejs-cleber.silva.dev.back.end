@@ -1,7 +1,7 @@
-import { httpResponse } from '../protocols/httpResponse'
-import { InvalidEmailError } from '../protocols/errors/InvalidEmailError'
+import { HttpResponse } from '../protocols'
+import { InvalidEmailError } from '../protocols/errors'
 
-export const invalidEmailError = (): httpResponse => ({
+export const invalidEmailError = (): HttpResponse => ({
   statusCode: 400,
   body: new InvalidEmailError('Invalid email')
 })

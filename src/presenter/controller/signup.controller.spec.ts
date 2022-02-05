@@ -1,17 +1,26 @@
 import { SignupController } from './signup.controller'
-import { Controller } from './protocols/controller'
-import { invalidParamError } from './errors/invalidParamError'
-import { serverError } from './errors/serverError'
-import { invalidEmailError } from './errors/invalidEmailError'
-import { invalidPasswordError } from './errors/invalidPasswordError'
-import { PasswordValidator } from './protocols/passwordValidator'
-import { EmailValidator } from './protocols/emailValidator'
+import {
+  Controller,
+  PasswordValidator,
+  EmailValidator,
+  CreateAccount,
+  HttpRequest,
+  HttpResponse
+} from './protocols'
+
+import {
+  invalidParamError,
+  serverError,
+  invalidEmailError,
+  invalidPasswordError
+} from './errors/'
 
 describe('Signup Controller', () => {
   interface sutType {
     sut: Controller
-    validatorForEmail: EmailValidator
-    validatorForPassword: PasswordValidator
+    validatorForEmailStub: EmailValidator
+    validatorForPasswordStub: PasswordValidator
+    createAccountStub: CreateAccount
   }
 
   class ValidatorForEmail implements EmailValidator {
@@ -26,14 +35,27 @@ describe('Signup Controller', () => {
     }
   }
 
+  class CreateAccountStub implements CreateAccount {
+    addAccount (httpRequest: HttpRequest): HttpResponse {
+      return {
+        statusCode: 200,
+        body: { ...httpRequest, id: 'valid_id' }
+      }
+    }
+  }
+
   const makeSut = (): sutType => {
-    const validatorForEmail = new ValidatorForEmail()
-    const validatorForPassword = new ValidatorForPassword()
-    const sut = new SignupController(validatorForEmail, validatorForPassword)
+    const validatorForEmailStub = new ValidatorForEmail()
+    const validatorForPasswordStub = new ValidatorForPassword()
+    const createAccountStub = new CreateAccountStub()
+    const sut = new SignupController(validatorForEmailStub,
+      validatorForPasswordStub,
+      createAccountStub)
     return {
       sut,
-      validatorForEmail,
-      validatorForPassword
+      validatorForEmailStub,
+      validatorForPasswordStub,
+      createAccountStub
     }
   }
   it('Should return 400 when no provide name', () => {
@@ -102,8 +124,8 @@ describe('Signup Controller', () => {
   })
 
   it('Should correct email be called in EmailValidator', () => {
-    const { sut, validatorForEmail } = makeSut()
-    const isValidMock = jest.spyOn(validatorForEmail, 'isValid')
+    const { sut, validatorForEmailStub } = makeSut()
+    const isValidMock = jest.spyOn(validatorForEmailStub, 'isValid')
     sut.handle({
       body: {
         name: 'valid_name',
@@ -116,8 +138,8 @@ describe('Signup Controller', () => {
   })
 
   it('Should return 400 when email is not a valid email', () => {
-    const { sut, validatorForEmail } = makeSut()
-    jest.spyOn(validatorForEmail, 'isValid').mockReturnValueOnce(false)
+    const { sut, validatorForEmailStub } = makeSut()
+    jest.spyOn(validatorForEmailStub, 'isValid').mockReturnValueOnce(false)
     const response = sut.handle({
       body: {
         name: 'valid_name',
@@ -131,8 +153,8 @@ describe('Signup Controller', () => {
   })
 
   it('Should correct password be called in PasswordValidator', () => {
-    const { sut, validatorForPassword } = makeSut()
-    const isValidMock = jest.spyOn(validatorForPassword, 'isValid')
+    const { sut, validatorForPasswordStub } = makeSut()
+    const isValidMock = jest.spyOn(validatorForPasswordStub, 'isValid')
     sut.handle({
       body: {
         name: 'valid_name',
@@ -145,8 +167,8 @@ describe('Signup Controller', () => {
   })
 
   it('Should return 400 when password is not a valid password', () => {
-    const { sut, validatorForPassword } = makeSut()
-    jest.spyOn(validatorForPassword, 'isValid').mockReturnValueOnce(false)
+    const { sut, validatorForPasswordStub } = makeSut()
+    jest.spyOn(validatorForPasswordStub, 'isValid').mockReturnValueOnce(false)
     const response = sut.handle({
       body: {
         name: 'valid_name',
@@ -160,8 +182,8 @@ describe('Signup Controller', () => {
   })
 
   it('Should return Exception', () => {
-    const { sut, validatorForPassword } = makeSut()
-    jest.spyOn(validatorForPassword, 'isValid').mockImplementation(() => {
+    const { sut, validatorForPasswordStub } = makeSut()
+    jest.spyOn(validatorForPasswordStub, 'isValid').mockImplementation(() => {
       throw Error()
     })
     const response = sut.handle({
@@ -174,5 +196,22 @@ describe('Signup Controller', () => {
     })
     expect(response.statusCode).toBe(500)
     expect(response).toEqual(serverError())
+  })
+
+  it('Should call addAccount with correct data', () => {
+    const { sut, createAccountStub } = makeSut()
+    const addAccountMock = jest.spyOn(createAccountStub, 'addAccount')
+    const request = {
+      body: {
+        name: 'valid_name',
+        email: 'invalid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    }
+    const response = sut.handle(request)
+    expect(response.statusCode).toBe(200)
+    expect(response.body.id).not.toBeNull()
+    expect(addAccountMock).toBeCalledWith(request)
   })
 })

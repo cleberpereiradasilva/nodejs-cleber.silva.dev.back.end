@@ -1,7 +1,7 @@
-import { httpResponse } from '../protocols/httpResponse'
-import { InvalidPasswordError } from '../protocols/errors/InvalidPasswordError'
+import { HttpResponse } from '../protocols'
+import { InvalidPasswordError } from '../protocols/errors'
 
-export const invalidPasswordError = (): httpResponse => ({
+export const invalidPasswordError = (): HttpResponse => ({
   statusCode: 400,
   body: new InvalidPasswordError()
 })
