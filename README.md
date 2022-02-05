@@ -5,3 +5,7 @@
 * S.O.L.I.D.
 * TDD
 
+---
+
+![Coverage](img/tests.png)
+
