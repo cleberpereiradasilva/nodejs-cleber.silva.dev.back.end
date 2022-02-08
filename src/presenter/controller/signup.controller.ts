@@ -16,7 +16,7 @@ import {
 
 import {
   AccountModel
-} from '../../domain/model'
+} from '../../domain/models'
 
 export class SignupController implements Controller {
   constructor (private readonly validatorForEmail: EmailValidator,

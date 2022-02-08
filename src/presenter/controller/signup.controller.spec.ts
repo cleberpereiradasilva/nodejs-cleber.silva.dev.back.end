@@ -9,7 +9,7 @@ import {
 import {
   AccountModel,
   CreateAccountModel
-} from '../../domain/model'
+} from '../../domain/models'
 
 import {
   invalidParamError,

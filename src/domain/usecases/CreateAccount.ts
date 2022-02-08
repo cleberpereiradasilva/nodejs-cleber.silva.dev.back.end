@@ -1,4 +1,4 @@
-import { AccountModel, CreateAccountModel } from '../model'
+import { AccountModel, CreateAccountModel } from '../models'
 
 export interface CreateAccount{
   addAccount: (createAccountModel: CreateAccountModel) => AccountModel
