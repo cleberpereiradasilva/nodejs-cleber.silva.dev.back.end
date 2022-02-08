@@ -14,6 +14,10 @@ import {
   invalidEmailError
 } from './errors'
 
+import {
+  AccountModel
+} from '../../domain/model'
+
 export class SignupController implements Controller {
   constructor (private readonly validatorForEmail: EmailValidator,
     private readonly validatorForPassword: PasswordValidator,
@@ -29,19 +33,27 @@ export class SignupController implements Controller {
           return invalidParamError(field)
         }
       }
-      if (httpRequest.body.confirmation !== httpRequest.body.password) {
+      const { password, email, name } = httpRequest.body
+
+      if (httpRequest.body.confirmation !== password) {
         return invalidParamError('confirmation')
       }
 
-      if (!this.validatorForEmail.isValid(httpRequest.body.email)) {
+      if (!this.validatorForEmail.isValid(email)) {
         return invalidEmailError()
       }
 
-      if (!this.validatorForPassword.isValid(httpRequest.body.password)) {
+      if (!this.validatorForPassword.isValid(password)) {
         return invalidPasswordError()
       }
+      const account: AccountModel = this.createAccount.addAccount({
+        password, email, name
+      })
 
-      return this.createAccount.addAccount(httpRequest)
+      return {
+        statusCode: 200,
+        body: account
+      }
     } catch (error) {
       return serverError()
     }

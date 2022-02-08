@@ -3,10 +3,13 @@ import {
   Controller,
   PasswordValidator,
   EmailValidator,
-  CreateAccount,
-  HttpRequest,
-  HttpResponse
+  CreateAccount
 } from './protocols'
+
+import {
+  AccountModel,
+  CreateAccountModel
+} from '../../domain/model'
 
 import {
   invalidParamError,
@@ -36,11 +39,9 @@ describe('Signup Controller', () => {
   }
 
   class CreateAccountStub implements CreateAccount {
-    addAccount (httpRequest: HttpRequest): HttpResponse {
-      return {
-        statusCode: 200,
-        body: { ...httpRequest, id: 'valid_id' }
-      }
+    addAccount = (createAccountModel: CreateAccountModel): AccountModel => {
+      const fackeAccount = { ...createAccountModel, id: 'valid_id' }
+      return fackeAccount
     }
   }
 
@@ -181,7 +182,7 @@ describe('Signup Controller', () => {
     expect(response).toEqual(invalidPasswordError())
   })
 
-  it('Should return Exception', () => {
+  it('Should Exception when ValidatorForEmail return a Exception', () => {
     const { sut, validatorForPasswordStub } = makeSut()
     jest.spyOn(validatorForPasswordStub, 'isValid').mockImplementation(() => {
       throw Error()
@@ -212,6 +213,24 @@ describe('Signup Controller', () => {
     const response = sut.handle(request)
     expect(response.statusCode).toBe(200)
     expect(response.body.id).not.toBeNull()
-    expect(addAccountMock).toBeCalledWith(request)
+    const { name, email, password } = request.body
+    expect(addAccountMock).toBeCalledWith({ name, email, password })
+  })
+
+  it('Should Exception when CreateAccount return a Exception', () => {
+    const { sut, createAccountStub } = makeSut()
+    jest.spyOn(createAccountStub, 'addAccount').mockImplementation(() => {
+      throw Error()
+    })
+    const response = sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'invalid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
+    expect(response.statusCode).toBe(500)
+    expect(response).toEqual(serverError())
   })
 })
