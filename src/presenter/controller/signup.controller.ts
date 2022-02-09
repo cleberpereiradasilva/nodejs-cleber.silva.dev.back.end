@@ -11,8 +11,9 @@ import {
   invalidParamError,
   serverError,
   invalidPasswordError,
-  invalidEmailError
-} from './errors'
+  invalidEmailError,
+  success
+} from './http-helpers'
 
 import {
   AccountModel
@@ -25,7 +26,7 @@ export class SignupController implements Controller {
     this.validatorForEmail = validatorForEmail
   }
 
-  handle (httpRequest: HttpRequest): HttpResponse {
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields = ['name', 'email', 'password', 'confirmation']
       for (const field of requiredFields) {
@@ -46,14 +47,11 @@ export class SignupController implements Controller {
       if (!this.validatorForPassword.isValid(password)) {
         return invalidPasswordError()
       }
-      const account: AccountModel = this.createAccount.addAccount({
+      const account: AccountModel = await this.createAccount.addAccount({
         password, email, name
       })
 
-      return {
-        statusCode: 200,
-        body: account
-      }
+      return await new Promise(resolve => resolve(success(account)))
     } catch (error) {
       return serverError()
     }
