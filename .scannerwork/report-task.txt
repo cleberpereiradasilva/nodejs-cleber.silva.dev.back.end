@@ -1,0 +1,6 @@
+projectKey=cleber-silva-dev-back-end
+serverUrl=http://localhost:9000
+serverVersion=9.3.0.51899
+dashboardUrl=http://localhost:9000/dashboard?id=cleber-silva-dev-back-end
+ceTaskId=AX7odr-s2kSaQf8F24O3
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AX7odr-s2kSaQf8F24O3

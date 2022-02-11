@@ -9,3 +9,6 @@
 
 ![Coverage](img/tests.png)
 
+![Coverage](img/sonar.png)
+
+

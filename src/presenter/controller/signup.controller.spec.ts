@@ -41,7 +41,7 @@ describe('Signup Controller', () => {
   class CreateAccountStub implements CreateAccount {
     addAccount = async (createAccountModel: CreateAccountModel): Promise<AccountModel> => {
       const fackeAccount = { ...createAccountModel, id: 'valid_id' }
-      return await new Promise(resolve => resolve(fackeAccount))
+      return await Promise.resolve(fackeAccount)
     }
   }
 

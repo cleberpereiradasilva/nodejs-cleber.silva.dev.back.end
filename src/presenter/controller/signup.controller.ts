@@ -51,7 +51,7 @@ export class SignupController implements Controller {
         password, email, name
       })
 
-      return await new Promise(resolve => resolve(success(account)))
+      return await Promise.resolve(success(account))
     } catch (error) {
       return serverError()
     }

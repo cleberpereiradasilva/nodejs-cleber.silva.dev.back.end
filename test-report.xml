@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="/home/noct/Hdzin/clebersilva.dev/node/src/presenter/controller/signup.controller.spec.ts">
+    <testCase name="Signup Controller Should return 400 when no provide name" duration="2"/>
+    <testCase name="Signup Controller Should return 400 when no provide email" duration="0"/>
+    <testCase name="Signup Controller Should return 400 when no provide password" duration="1"/>
+    <testCase name="Signup Controller Should return 400 when no provide confirmation" duration="0"/>
+    <testCase name="Signup Controller Should return 400 when password is diferente of confirmation" duration="1"/>
+    <testCase name="Signup Controller Should correct email be called in EmailValidator" duration="2"/>
+    <testCase name="Signup Controller Should return 400 when email is not a valid email" duration="0"/>
+    <testCase name="Signup Controller Should correct password be called in PasswordValidator" duration="1"/>
+    <testCase name="Signup Controller Should return 400 when password is not a valid password" duration="0"/>
+    <testCase name="Signup Controller Should Exception when ValidatorForEmail return a Exception" duration="1"/>
+    <testCase name="Signup Controller Should call addAccount with correct data" duration="0"/>
+    <testCase name="Signup Controller Should Exception when CreateAccount return a Exception" duration="1"/>
+  </file>
+</testExecutions>
