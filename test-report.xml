@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="/home/noct/Hdzin/clebersilva.dev/node/src/utils/EmailValidadorAdapter.spec.ts">
-    <testCase name="EmailValitorAdapter Expected false on a invalid e-mail" duration="2"/>
-    <testCase name="EmailValitorAdapter Expected true on a valid e-mail" duration="1"/>
-    <testCase name="EmailValitorAdapter Expected isValid will be called with correct value" duration="1"/>
-  </file>
   <file path="/home/noct/Hdzin/clebersilva.dev/node/src/presenter/controller/signup.controller.spec.ts">
-    <testCase name="Signup Controller Should return 400 when no provide name" duration="3"/>
+    <testCase name="Signup Controller Should return 400 when no provide name" duration="6"/>
     <testCase name="Signup Controller Should return 400 when no provide email" duration="1"/>
     <testCase name="Signup Controller Should return 400 when no provide password" duration="0"/>
     <testCase name="Signup Controller Should return 400 when no provide confirmation" duration="1"/>
     <testCase name="Signup Controller Should return 400 when password is diferente of confirmation" duration="0"/>
-    <testCase name="Signup Controller Should correct email be called in EmailValidator" duration="1"/>
+    <testCase name="Signup Controller Should correct email be called in EmailValidator" duration="2"/>
     <testCase name="Signup Controller Should return 400 when email is not a valid email" duration="0"/>
-    <testCase name="Signup Controller Should correct password be called in PasswordValidator" duration="0"/>
-    <testCase name="Signup Controller Should return 400 when password is not a valid password" duration="1"/>
-    <testCase name="Signup Controller Should Exception when ValidatorForEmail return a Exception" duration="0"/>
+    <testCase name="Signup Controller Should correct password be called in PasswordValidator" duration="1"/>
+    <testCase name="Signup Controller Should return 400 when password is not a valid password" duration="0"/>
+    <testCase name="Signup Controller Should Exception when ValidatorForEmail return a Exception" duration="1"/>
     <testCase name="Signup Controller Should call addAccount with correct data" duration="1"/>
-    <testCase name="Signup Controller Should Exception when CreateAccount return a Exception" duration="0"/>
+    <testCase name="Signup Controller Should Exception when CreateAccount return a Exception" duration="1"/>
+    <testCase name="Signup Controller Should Encrypt password" duration="0"/>
+  </file>
+  <file path="/home/noct/Hdzin/clebersilva.dev/node/src/utils/EmailValidadorAdapter.spec.ts">
+    <testCase name="EmailValitorAdapter Expected false on a invalid e-mail" duration="2"/>
+    <testCase name="EmailValitorAdapter Expected true on a valid e-mail" duration="0"/>
+    <testCase name="EmailValitorAdapter Expected isValid will be called with correct value" duration="1"/>
   </file>
 </testExecutions>

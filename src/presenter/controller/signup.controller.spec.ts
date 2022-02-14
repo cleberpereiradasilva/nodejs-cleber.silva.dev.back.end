@@ -3,7 +3,8 @@ import {
   Controller,
   PasswordValidator,
   EmailValidator,
-  CreateAccount
+  CreateAccount,
+  PasswordEncrypt
 } from './protocols'
 
 import {
@@ -24,8 +25,14 @@ describe('Signup Controller', () => {
     validatorForEmailStub: EmailValidator
     validatorForPasswordStub: PasswordValidator
     createAccountStub: CreateAccount
+    encryptPasswordStub: PasswordEncrypt
   }
 
+  class EncryptPassword implements PasswordEncrypt {
+    encrypt (password: string): string {
+      return 'hash_encrypted'
+    }
+  }
   class ValidatorForEmail implements EmailValidator {
     isValid (email: string): boolean {
       return true
@@ -39,8 +46,16 @@ describe('Signup Controller', () => {
   }
 
   class CreateAccountStub implements CreateAccount {
+    constructor (private readonly encryptPassword: EncryptPassword) {
+      this.encryptPassword = encryptPassword
+    }
+
     addAccount = async (createAccountModel: CreateAccountModel): Promise<AccountModel> => {
-      const fackeAccount = { ...createAccountModel, id: 'valid_id' }
+      const fackeAccount = {
+        ...createAccountModel,
+        id: 'valid_id',
+        password: this.encryptPassword.encrypt(createAccountModel.password)
+      }
       return await Promise.resolve(fackeAccount)
     }
   }
@@ -48,7 +63,9 @@ describe('Signup Controller', () => {
   const makeSut = (): sutType => {
     const validatorForEmailStub = new ValidatorForEmail()
     const validatorForPasswordStub = new ValidatorForPassword()
-    const createAccountStub = new CreateAccountStub()
+    const encryptPasswordStub = new EncryptPassword()
+    const createAccountStub = new CreateAccountStub(encryptPasswordStub)
+
     const sut = new SignupController(validatorForEmailStub,
       validatorForPasswordStub,
       createAccountStub)
@@ -56,7 +73,8 @@ describe('Signup Controller', () => {
       sut,
       validatorForEmailStub,
       validatorForPasswordStub,
-      createAccountStub
+      createAccountStub,
+      encryptPasswordStub
     }
   }
   it('Should return 400 when no provide name', async () => {
@@ -232,5 +250,21 @@ describe('Signup Controller', () => {
     })
     expect(response.statusCode).toBe(500)
     expect(response).toEqual(serverError())
+  })
+
+  it('Should Encrypt password', async () => {
+    const { sut, encryptPasswordStub } = makeSut()
+    const encryptMock = jest.spyOn(encryptPasswordStub, 'encrypt')
+    const response = await sut.handle({
+      body: {
+        name: 'valid_name',
+        email: 'invalid_email',
+        password: 'valid_password',
+        confirmation: 'valid_password'
+      }
+    })
+    expect(response.statusCode).toBe(200)
+    expect(response.body.password).toBe('hash_encrypted')
+    expect(encryptMock).toBeCalledWith('valid_password')
   })
 })
